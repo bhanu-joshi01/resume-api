@@ -1,81 +1,210 @@
 # Resume API
 
-A REST API for an AI Resume Builder built with Node.js + Express.
+A REST API for an AI Resume Builder built using **Node.js** and **Express.js**.
 
-## How to Run
+This project provides RESTful endpoints for managing users, resumes, resume sections, templates, AI-powered writing assistance, ATS checking, resume tailoring, exporting, and sharing. The API follows REST architecture and uses **JSON** for data exchange.
 
+---
+
+## Tech Stack
+
+- Node.js
+- Express.js
+- JavaScript
+- JSON File Storage
+- Postman
+
+---
+
+## Features
+
+- User Authentication
+- User Management
+- Resume Documents
+- Resume Sections
+- Section Items
+- Resume Versions
+- Resume Templates
+- AI Writing
+- ATS Resume Check
+- Resume Tailoring
+- Resume Export
+- Resume Sharing
+- Job Applications
+
+---
+
+## Project Structure
+
+```text
+resume-api/
+├── controllers/
+├── middleware/
+├── models/
+├── routes/
+├── screenshots/
+├── data.json
+├── app.js
+├── package.json
+└── README.md
+```
+
+### Folder Description
+
+| Folder | Description |
+|---------|-------------|
+| controllers | Contains business logic for handling API requests and responses. |
+| middleware | Stores reusable middleware such as authentication and request validation. |
+| models | Defines the application's data structure. |
+| routes | Contains all REST API endpoint definitions. |
+| screenshots | Stores Postman API testing screenshots. |
+| data.json | JSON-based data storage used by the application. |
+| app.js | Entry point of the Express server. |
+
+---
+
+## API Resources
+
+The API provides the following resources:
+
+- Authentication
+- Users
+- Documents
+- Sections
+- Section Items
+- Versions
+- Templates
+- AI Writing
+- ATS Check
+- Tailoring
+- Export
+- Share
+- Applications
+
+Each resource follows RESTful principles using HTTP methods such as **GET**, **POST**, **PUT**, and **DELETE**.
+
+---
+
+## Installation
+
+Clone the repository
+
+```bash
+git clone <repository-url>
+```
+
+Navigate to the project directory
+
+```bash
+cd resume-api
+```
+
+Install dependencies
+
+```bash
 npm install
+```
 
-node app.js
+Start the server
 
-Server runs on: http://localhost:3000
+```bash
+npm start
+```
 
-## Routes
+The server will run at:
 
-### Auth
+```text
+http://localhost:3000
+```
 
-POST /api/auth/register
+---
 
-POST /api/auth/login
+## API Testing
 
-POST /api/auth/logout
+All API endpoints were tested using **Postman**.
 
-POST /api/auth/forgot-password
+### Register
 
-POST /api/auth/reset-password
+Creates a new user account.
 
+![Register](screenshots/01-register.png)
 
-### Users
+### Login
 
-GET /api/users/me
+Authenticates an existing user.
 
-PUT /api/users/me
+![Login](screenshots/02-login.png)
 
-DELETE /api/users/me
+### User Profile
 
+Retrieves the authenticated user's profile information.
 
-### Documents
+![User Profile](screenshots/03-user-profile.png)
 
-GET /api/documents
+### Create Document
 
-POST /api/documents
+Creates a new resume document.
 
-GET /api/documents/:id
+![Document](screenshots/04-create-document.png)
 
-PUT /api/documents/:id
+### Create Section
 
-DELETE /api/documents/:id
+Adds a new section to a resume.
 
+![Section](screenshots/05-create-section.png)
 
-### Templates
+### Create Section Item
 
-GET /api/templates
+Adds content to a specific resume section.
 
-GET /api/templates/:id
+![Section Item](screenshots/06-create-section-item.png)
 
+### Create Version
 
-### AI
+Creates a new version of the resume.
 
-POST /api/ai/bullets
+![Version](screenshots/07-create-version.png)
 
-POST /api/ai/summary
+### Get Templates
 
-POST /api/ai/rewrite
+Retrieves the available resume templates.
 
-POST /api/ai/prompt
+![Templates](screenshots/08-get-templates.png)
 
+### AI Writing
 
-### Applications
+Generates AI-assisted content for resume sections.
 
-GET /api/applications
+![AI Writing](screenshots/09-ai-writing.png)
 
-POST /api/applications
+### ATS Check
 
-PATCH /api/applications/:id
+Analyzes the resume for ATS compatibility.
 
-DELETE /api/applications/:id
+![ATS Check](screenshots/10-ats-check.png)
 
+### Tailoring
 
-## Status
+Customizes the resume according to a job description.
 
-All implemented API endpoints tested and working with correct JSON responses and status codes.
+![Tailoring](screenshots/11-tailoring.png)
+
+### Export
+
+Exports the resume in the requested format.
+
+![Export](screenshots/12-export.png)
+
+### Share Document
+
+Generates a shareable link for the resume.
+
+![Share](screenshots/13-share-document.png)
+
+---
+
+## Author
+
+**Bhanu Joshi**
+
+GitHub: https://github.com/bhanu-joshi01

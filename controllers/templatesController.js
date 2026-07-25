@@ -1,34 +1,14 @@
-const fs = require("fs");
+const model = require("../models/resourceModel");
 
-// GET ALL TEMPLATES
 function getTemplates(req, res) {
-
-    const data = JSON.parse(fs.readFileSync("data.json"));
-
-    res.json(data.templates);
-
+    res.json(model.getAll("templates"));
 }
 
-// GET TEMPLATE BY ID
 function getTemplateById(req, res) {
+    const template = model.getById("templates", req.params.id);
 
-    const data = JSON.parse(fs.readFileSync("data.json"));
-
-    for (let i = 0; i < data.templates.length; i++) {
-
-        if (data.templates[i].id == req.params.id) {
-            return res.json(data.templates[i]);
-        }
-
-    }
-
-    res.status(404).json({
-        message: "Template not found"
-    });
-
+    if (!template) return res.status(404).json({ message: "Template not found" });
+    res.json(template);
 }
 
-module.exports = {
-    getTemplates,
-    getTemplateById
-};
+module.exports = { getTemplates, getTemplateById };

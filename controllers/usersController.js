@@ -1,83 +1,37 @@
-const fs = require("fs");
+const { readData, writeData } = require("../models/dataModel");
 
-// GET Profile
 function getProfile(req, res) {
+    const data = readData();
 
-    const data = fs.readFileSync("data.json", "utf8");
-    const jsonData = JSON.parse(data);
-
-    if (jsonData.users.length === 0) {
-        return res.status(404).json({
-            success: false,
-            message: "No User Found"
-        });
+    if (data.users.length === 0) {
+        return res.status(404).json({ message: "No User Found" });
     }
 
-    res.status(200).json({
-        success: true,
-        data: jsonData.users[0]
-    });
-
+    res.json(data.users[0]);
 }
 
-// UPDATE Profile
 function updateProfile(req, res) {
+    const data = readData();
 
-    const data = fs.readFileSync("data.json", "utf8");
-    const jsonData = JSON.parse(data);
-
-    if (jsonData.users.length === 0) {
-        return res.status(404).json({
-            success: false,
-            message: "No User Found"
-        });
+    if (data.users.length === 0) {
+        return res.status(404).json({ message: "No User Found" });
     }
 
-    jsonData.users[0].name = req.body.name;
-    jsonData.users[0].email = req.body.email;
-
-    fs.writeFileSync(
-        "data.json",
-        JSON.stringify(jsonData, null, 2)
-    );
-
-    res.status(200).json({
-        success: true,
-        message: "Profile Updated Successfully",
-        data: jsonData.users[0]
-    });
-
+    Object.assign(data.users[0], req.body);
+    writeData(data);
+    res.json(data.users[0]);
 }
 
-// DELETE Profile
 function deleteProfile(req, res) {
+    const data = readData();
 
-    const data = fs.readFileSync("data.json", "utf8");
-    const jsonData = JSON.parse(data);
-
-    if (jsonData.users.length === 0) {
-        return res.status(404).json({
-            success: false,
-            message: "No User Found"
-        });
+    if (data.users.length === 0) {
+        return res.status(404).json({ message: "No User Found" });
     }
 
-    jsonData.users.splice(0, 1);
-
-    fs.writeFileSync(
-        "data.json",
-        JSON.stringify(jsonData, null, 2)
-    );
-
-    res.status(200).json({
-        success: true,
-        message: "Profile Deleted Successfully"
-    });
-
+    data.users.splice(0, 1);
+    writeData(data);
+    res.status(204).send();
 }
 
-module.exports = {
-    getProfile,
-    updateProfile,
-    deleteProfile
-};
+module.exports = { getProfile, updateProfile, deleteProfile };
