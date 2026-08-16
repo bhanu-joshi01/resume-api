@@ -1,30 +1,33 @@
-const model = require("../models/resourceModel");
+const { Version, Document } = require("../models");
 
-function getVersions(req, res) {
-    res.json(model.getAll("versions").filter(item => item.documentId == req.params.documentId));
+async function create(req, res) {
+  try {
+    const { documentId, label, snapshot } = req.body;
+    const doc = await Document.findByPk(documentId);
+    if (!doc || doc.userId !== req.user.id) {
+      return res.status(403).send({ success: false, message: "Unauthorized" });
+    }
+    const version = await Version.create({ documentId, label, snapshot });
+    res.status(201).send({ success: true, version });
+  } catch (error) {
+    console.log("error creating version:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 }
 
-function createVersion(req, res) {
-    const version = model.create("versions", {
-        id: model.getAll("versions").length + 1,
-        documentId: Number(req.params.documentId),
-        name: req.body.name,
-        content: req.body.content
-    });
-
-    res.status(201).json(version);
+async function listByDocument(req, res) {
+  try {
+    const { documentId } = req.params;
+    const doc = await Document.findByPk(documentId);
+    if (!doc || doc.userId !== req.user.id) {
+      return res.status(403).send({ success: false, message: "Unauthorized" });
+    }
+    const versions = await Version.findAll({ where: { documentId } });
+    res.send({ success: true, versions });
+  } catch (error) {
+    console.log("error fetching versions:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 }
 
-function getVersionById(req, res) {
-    const version = model.getById("versions", req.params.id);
-    if (!version) return res.status(404).json({ message: "Version not found" });
-    res.json(version);
-}
-
-function restoreVersion(req, res) {
-    const version = model.getById("versions", req.params.id);
-    if (!version) return res.status(404).json({ message: "Version not found" });
-    res.status(202).json({ message: "Version Restored", version });
-}
-
-module.exports = { getVersions, createVersion, getVersionById, restoreVersion };
+module.exports = { create, listByDocument };
