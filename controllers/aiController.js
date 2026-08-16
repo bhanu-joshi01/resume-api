@@ -1,17 +1,13 @@
-function generateBullets(req, res) {
-    res.status(202).json({ message: "Bullets Generated Successfully" });
+async function improveText(req, res) {
+  try {
+    const { text } = req.body;
+    // TODO: Integrate OpenAI or Gemini API here
+    const improvedText = `[AI Improved] ${text}`;
+    res.send({ success: true, improvedText });
+  } catch (error) {
+    console.log("error in AI improve:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 }
 
-function generateSummary(req, res) {
-    res.status(202).json({ message: "Summary Generated Successfully" });
-}
-
-function rewriteText(req, res) {
-    res.status(202).json({ message: "Text Rewritten Successfully" });
-}
-
-function promptText(req, res) {
-    res.status(202).json({ message: "Prompt Applied Successfully" });
-}
-
-module.exports = { generateBullets, generateSummary, rewriteText, promptText };
+module.exports = { improveText };
