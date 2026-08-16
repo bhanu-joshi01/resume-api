@@ -1,26 +1,47 @@
-const model = require("../models/resourceModel");
+const { Share, Document } = require("../models");
 
-function createShare(req, res) {
-    const share = model.create("shares", {
-        id: model.getAll("shares").length + 1,
-        documentId: Number(req.params.documentId),
-        public: true
-    });
-
-    res.status(201).json(share);
+async function create(req, res) {
+  try {
+    const { documentId, slug } = req.body;
+    const doc = await Document.findByPk(documentId);
+    if (!doc || doc.userId !== req.user.id) {
+      return res.status(403).send({ success: false, message: "Unauthorized" });
+    }
+    const share = await Share.create({ documentId, slug });
+    res.status(201).send({ success: true, share });
+  } catch (error) {
+    console.log("error creating share:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 }
 
-function getShare(req, res) {
-    const share = model.getAll("shares").find(item => item.documentId == req.params.documentId);
-    if (!share) return res.status(404).json({ message: "Share not found" });
-    res.json(share);
+async function listByDocument(req, res) {
+  try {
+    const { documentId } = req.params;
+    const doc = await Document.findByPk(documentId);
+    if (!doc || doc.userId !== req.user.id) {
+      return res.status(403).send({ success: false, message: "Unauthorized" });
+    }
+    const shares = await Share.findAll({ where: { documentId } });
+    res.send({ success: true, shares });
+  } catch (error) {
+    console.log("error fetching shares:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 }
 
-function deleteShare(req, res) {
-    const share = model.getAll("shares").find(item => item.documentId == req.params.documentId);
-    if (!share) return res.status(404).json({ message: "Share not found" });
-    model.remove("shares", share.id);
+async function remove(req, res) {
+  try {
+    const share = await Share.findByPk(req.params.id, { include: [Document] });
+    if (!share || share.Document.userId !== req.user.id) {
+      return res.status(403).send({ success: false, message: "Unauthorized" });
+    }
+    await share.destroy();
     res.status(204).send();
+  } catch (error) {
+    console.log("error deleting share:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 }
 
-module.exports = { createShare, getShare, deleteShare };
+module.exports = { create, listByDocument, remove };
