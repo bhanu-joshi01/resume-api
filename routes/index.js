@@ -1,16 +1,37 @@
 const express = require("express");
 const router = express.Router();
 
-router.use("/auth", require("./auth"));
-router.use("/users", require("./users"));
-router.use("/documents", require("./documents"));
-router.use("/sections/:sectionId/items", require("./sectionItems"));
-router.use("/templates", require("./templates"));
-router.use("/ai", require("./ai"));
-router.use("/ats", require("./ats"));
-router.use("/tailoring", require("./tailoring"));
-router.use("/export", require("./export"));
-router.use("/share", require("./shares"));
-router.use("/applications", require("./applications"));
+// Connect document routes
+router.use("/documents", require("./documentRoutes"));
+
+// Connect auth routes
+router.use("/auth", require("./authRoutes"));
+
+// Connect section routes
+router.use("/sections", require("./sectionRoutes"));
+
+// Connect item routes
+router.use("/items", require("./itemRoutes"));
+
+// Connect template routes
+router.use("/templates", require("./templateRoutes"));
+
+// Connect share routes
+router.use("/shares", require("./shareRoutes"));
+
+// Connect version routes
+router.use("/versions", require("./versionRoutes"));
+
+// Connect application routes
+router.use("/applications", require("./applicationRoutes"));
+
+// Connect AI routes
+router.use("/ai", require("./aiRoutes"));
+
+// Connect export routes
+router.use("/export", require("./exportRoutes"));
+
+// Connect dashboard routes
+router.use("/dashboard", require("./dashboardRoutes"));
 
 module.exports = router;
