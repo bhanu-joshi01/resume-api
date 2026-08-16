@@ -1,14 +1,24 @@
-const model = require("../models/resourceModel");
+const { Template } = require("../models");
 
-function getTemplates(req, res) {
-    res.json(model.getAll("templates"));
+async function create(req, res) {
+  try {
+    const { name, config } = req.body;
+    const template = await Template.create({ name, config });
+    res.status(201).send({ success: true, template });
+  } catch (error) {
+    console.log("error creating template:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 }
 
-function getTemplateById(req, res) {
-    const template = model.getById("templates", req.params.id);
-
-    if (!template) return res.status(404).json({ message: "Template not found" });
-    res.json(template);
+async function listAll(req, res) {
+  try {
+    const templates = await Template.findAll();
+    res.send({ success: true, templates });
+  } catch (error) {
+    console.log("error fetching templates:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 }
 
-module.exports = { getTemplates, getTemplateById };
+module.exports = { create, listAll };
