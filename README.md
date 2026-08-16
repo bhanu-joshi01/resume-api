@@ -1,210 +1,137 @@
 # Resume API
 
-A REST API for an AI Resume Builder built using **Node.js** and **Express.js**.
-
-This project provides RESTful endpoints for managing users, resumes, resume sections, templates, AI-powered writing assistance, ATS checking, resume tailoring, exporting, and sharing. The API follows REST architecture and uses **JSON** for data exchange.
-
----
-
-## Tech Stack
-
-- Node.js
-- Express.js
-- JavaScript
-- JSON File Storage
-- Postman
-
----
-
-## Features
-
-- User Authentication
-- User Management
-- Resume Documents
-- Resume Sections
-- Section Items
-- Resume Versions
-- Resume Templates
-- AI Writing
-- ATS Resume Check
-- Resume Tailoring
-- Resume Export
-- Resume Sharing
-- Job Applications
-
----
+This repository contains my backend learning progress, where each feature is implemented step by step with meaningful Git commits.
 
 ## Project Structure
 
 ```text
 resume-api/
-├── controllers/
-├── middleware/
-├── models/
-├── routes/
-├── screenshots/
-├── data.json
-├── app.js
+│
+├── backup/          # Earlier CRUD implementations using local/JSON data
+├── models copy/     # Earlier manually created Sequelize models
+├── config/          # Sequelize database configuration
+├── migrations/      # Database schema and migration files
+├── models/          # Sequelize models and relationships
+├── controllers/     # Request handling and business logic
+├── middleware/      # Custom Express middleware and validation
+├── routes/          # API route definitions
+├── app.js           # Application entry point
 ├── package.json
-└── README.md
+└── .gitignore
 ```
 
-### Folder Description
+### `backup/` and `models copy/`
 
-| Folder | Description |
-|---------|-------------|
-| controllers | Contains business logic for handling API requests and responses. |
-| middleware | Stores reusable middleware such as authentication and request validation. |
-| models | Defines the application's data structure. |
-| routes | Contains all REST API endpoint definitions. |
-| screenshots | Stores Postman API testing screenshots. |
-| data.json | JSON-based data storage used by the application. |
-| app.js | Entry point of the Express server. |
+* **`backup/`** contains earlier CRUD implementations using local or JSON-based storage.
+* **`models copy/`** contains earlier versions of the Sequelize models created before using Sequelize CLI.
 
----
+These folders are kept for learning and comparison.
 
-## API Resources
+## Features
 
-The API provides the following resources:
+* Express server setup
+* Modular folder structure
+* REST API routing
+* Controller architecture
+* Relational database design
+* Foreign key constraints
+* Sequelize ORM integration
+* Database migrations
+* Sequelize associations
+* JSON request parsing
 
-- Authentication
-- Users
-- Documents
-- Sections
-- Section Items
-- Versions
-- Templates
-- AI Writing
-- ATS Check
-- Tailoring
-- Export
-- Share
-- Applications
+## Tech Stack
 
-Each resource follows RESTful principles using HTTP methods such as **GET**, **POST**, **PUT**, and **DELETE**.
+* Node.js
+* Express.js
+* Sequelize ORM
+* Sequelize CLI
+* MySQL / PostgreSQL
+* Git & GitHub
 
----
+## Learning Objectives
 
-## Installation
+* Understand Express architecture and request routing.
+* Separate application logic using controllers.
+* Understand relational database design.
+* Implement one-to-many relationships and foreign keys.
+* Use Sequelize for database operations and migrations.
+* Build a scalable backend structure.
 
-Clone the repository
+## API Documentation
+
+The API documentation is available through Postman.
+
+Currently implemented:
+
+* Authentication API
+* Document API
+
+Remaining APIs will be added as development continues.
+
+[View Postman API Documentation](https://documenter.getpostman.com/view/56589029/2sBY4SMJa5)
+
+## Current Progress
+
+* Project initialized and Express server configured
+* Folder structure created
+* Document routes and controllers added
+* Database schema designed and migrated
+* Sequelize associations implemented
+* Controllers refactored to use Sequelize models
+* CRUD operations for remaining tables
+* Middleware and validation
+* Authentication
+* API testing
+
+## Getting Started
+
+### Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/GAURAVNEGI33/resume-api
 ```
 
-Navigate to the project directory
-
-```bash
-cd resume-api
-```
-
-Install dependencies
+### Install Dependencies
 
 ```bash
 npm install
 ```
 
-Start the server
+### Setup Database
 
-```bash
-npm start
-```
-
-The server will run at:
+Make sure your database is running and update the credentials in:
 
 ```text
-http://localhost:3000
+config/config.js
 ```
 
----
+Run the migrations:
 
-## API Testing
+```bash
+npx sequelize-cli db:migrate
+```
 
-All API endpoints were tested using **Postman**.
+### Start Server
 
-### Register
+```bash
+node app.js
+```
 
-Creates a new user account.
+## Learning Notes
 
-![Register](screenshots/01-register.png)
+This project focuses on:
 
-### Login
+* Express request and response lifecycle
+* REST API principles
+* Database migrations using Sequelize CLI
+* Sequelize models and associations
+* Foreign keys and cascading operations
+* Controller and route separation
 
-Authenticates an existing user.
-
-![Login](screenshots/02-login.png)
-
-### User Profile
-
-Retrieves the authenticated user's profile information.
-
-![User Profile](screenshots/03-user-profile.png)
-
-### Create Document
-
-Creates a new resume document.
-
-![Document](screenshots/04-create-document.png)
-
-### Create Section
-
-Adds a new section to a resume.
-
-![Section](screenshots/05-create-section.png)
-
-### Create Section Item
-
-Adds content to a specific resume section.
-
-![Section Item](screenshots/06-create-section-item.png)
-
-### Create Version
-
-Creates a new version of the resume.
-
-![Version](screenshots/07-create-version.png)
-
-### Get Templates
-
-Retrieves the available resume templates.
-
-![Templates](screenshots/08-get-templates.png)
-
-### AI Writing
-
-Generates AI-assisted content for resume sections.
-
-![AI Writing](screenshots/09-ai-writing.png)
-
-### ATS Check
-
-Analyzes the resume for ATS compatibility.
-
-![ATS Check](screenshots/10-ats-check.png)
-
-### Tailoring
-
-Customizes the resume according to a job description.
-
-![Tailoring](screenshots/11-tailoring.png)
-
-### Export
-
-Exports the resume in the requested format.
-
-![Export](screenshots/12-export.png)
-
-### Share Document
-
-Generates a shareable link for the resume.
-
-![Share](screenshots/13-share-document.png)
-
----
 
 ## Author
 
 **Bhanu Joshi**
 
-GitHub: https://github.com/bhanu-joshi01
+Learning backend development with Node.js and Express as part of my full-stack web development journey.
