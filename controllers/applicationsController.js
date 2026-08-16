@@ -1,32 +1,66 @@
-const model = require("../models/resourceModel");
+const { Application, Document } = require("../models");
 
-function getApplications(req, res) {
-    res.json(model.getAll("applications"));
-}
-
-function createApplication(req, res) {
-    const application = model.create("applications", {
-        id: model.getAll("applications").length + 1,
-        company: req.body.company,
-        status: req.body.status
-    });
-
-    res.status(201).json(application);
-}
-
-function updateApplication(req, res) {
-    const application = model.update("applications", req.params.id, req.body);
-
-    if (!application) return res.status(404).json({ message: "Application not found" });
-    res.json(application);
-}
-
-function deleteApplication(req, res) {
-    if (!model.remove("applications", req.params.id)) {
-        return res.status(404).json({ message: "Application not found" });
+async function create(req, res) {
+  try {
+    const { documentId, company, role, status } = req.body;
+    
+    // Check if the document being used belongs to the user
+    const doc = await Document.findByPk(documentId);
+    if (!doc || doc.userId !== req.user.id) {
+      return res.status(403).send({ success: false, message: "Unauthorized document" });
     }
 
-    res.status(204).send();
+    const application = await Application.create({
+      userId: req.user.id, // Direct association to user
+      documentId,
+      company,
+      role,
+      status: status || "saved"
+    });
+
+    res.status(201).send({ success: true, application });
+  } catch (error) {
+    console.log("error creating application:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 }
 
-module.exports = { getApplications, createApplication, updateApplication, deleteApplication };
+async function listByUser(req, res) {
+  try {
+    const applications = await Application.findAll({ where: { userId: req.user.id } });
+    res.send({ success: true, applications });
+  } catch (error) {
+    console.log("error fetching applications:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
+}
+
+async function update(req, res) {
+  try {
+    const application = await Application.findByPk(req.params.id);
+    if (!application || application.userId !== req.user.id) {
+      return res.status(403).send({ success: false, message: "Unauthorized" });
+    }
+    await application.update(req.body);
+    res.send({ success: true, application });
+  } catch (error) {
+    console.log("error updating application:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
+}
+
+async function remove(req, res) {
+  try {
+    const application = await Application.findByPk(req.params.id);
+    if (!application || application.userId !== req.user.id) {
+      return res.status(403).send({ success: false, message: "Unauthorized" });
+    }
+    await application.destroy();
+    res.status(204).send();
+  } catch (error) {
+    console.log("error deleting application:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
+}
+
+module.exports = { create, listByUser, update, remove };
