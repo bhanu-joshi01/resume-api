@@ -1,34 +1,135 @@
-const model = require("../models/resourceModel");
+const { Section, Document } = require("../models");
 
-function getSections(req, res) {
-    res.json(model.getAll("sections").filter(item => item.documentId == req.params.documentId));
-}
+async function create(req, res) {
+  try {
+    const { documentId, heading, position } = req.body;
+    const isSidebar = req.body.isSidebar === true;
 
-function createSection(req, res) {
-    const section = model.create("sections", {
-        id: model.getAll("sections").length + 1,
-        documentId: Number(req.params.documentId),
-        name: req.body.name
+    // SECURITY CHECK: Ensure the document belongs to the logged-in user
+    const doc = await Document.findOne({ where: { id: documentId, userId: req.user.id } });
+    if (!doc) {
+      return res.status(403).send({
+        success: false,
+        message: "Unauthorized. You do not own this document.",
+      });
+    }
+
+    const created = await Section.create({ documentId, heading, position, isSidebar});
+    res.status(201).send({
+      success: true,
+      message: "Section created successfully.",
+      section: created,
     });
-
-    res.status(201).json(section);
+  } catch (error) {
+    console.log("error in section create:", error);
+    res.status(500).send({
+      success: false,
+      message: "Failed to create section.",
+    });
+  }
 }
 
-function getSectionById(req, res) {
-    const section = model.getById("sections", req.params.id);
-    if (!section) return res.status(404).json({ message: "Section not found" });
-    res.json(section);
+async function listByDocument(req, res) {
+  try {
+    const documentId = req.params.documentId;
+
+    // SECURITY CHECK
+    const doc = await Document.findOne({ where: { id: documentId, userId: req.user.id } });
+    if (!doc) {
+      return res.status(403).send({
+        success: false,
+        message: "Unauthorized. You do not own this document.",
+      });
+    }
+
+    const sections = await Section.findAll({ 
+      where: { documentId },
+      order: [['position', 'ASC']] // Usually we want sections ordered by their position
+    });
+    
+    res.send({
+      success: true,
+      message: "Retrieved document sections.",
+      sections,
+    });
+  } catch (error) {
+    console.log("error in section listByDocument:", error);
+    res.status(500).send({
+      success: false,
+      message: "Failed to retrieve sections.",
+    });
+  }
 }
 
-function updateSection(req, res) {
-    const section = model.update("sections", req.params.id, req.body);
-    if (!section) return res.status(404).json({ message: "Section not found" });
-    res.json(section);
+async function update(req, res) {
+  try {
+    const id = req.params.id;
+    
+    // Find the section and INCLUDE its parent Document so we can check the userId
+    const section = await Section.findByPk(id, { include: [Document] });
+    
+    if (!section || section.Document.userId !== req.user.id) {
+      return res.status(404).send({
+        success: false,
+        message: "Section not found or unauthorized.",
+      });
+    }
+const allowedUpdates = {};
+
+if (typeof req.body.heading === "string") {
+  allowedUpdates.heading = req.body.heading.trim();
 }
 
-function deleteSection(req, res) {
-    if (!model.remove("sections", req.params.id)) return res.status(404).json({ message: "Section not found" });
+if (Number.isInteger(req.body.position)) {
+  allowedUpdates.position = req.body.position;
+}
+
+if (typeof req.body.isSidebar === "boolean") {
+  allowedUpdates.isSidebar = req.body.isSidebar;
+}
+
+await section.update(allowedUpdates);
+    res.send({
+      success: true,
+      message: "Section updated.",
+      section,
+    });
+  } catch (error) {
+    console.log("error in section update:", error);
+    res.status(500).send({
+      success: false,
+      message: "Failed to update section.",
+    });
+  }
+}
+
+async function remove(req, res) {
+  try {
+    const id = req.params.id;
+    
+    const section = await Section.findByPk(id, { include: [Document] });
+    
+    if (!section || section.Document.userId !== req.user.id) {
+      return res.status(404).send({
+        success: false,
+        message: "Section not found or unauthorized.",
+      });
+    }
+
+    await section.destroy();
     res.status(204).send();
+  } catch (error) {
+    console.log("error in section remove:", error);
+    res.status(500).send({
+      success: false,
+      message: "Failed to remove section.",
+    });
+  }
 }
 
-module.exports = { getSections, createSection, getSectionById, updateSection, deleteSection };
+module.exports = {
+  create,
+  listByDocument,
+  update,
+  remove,
+};
